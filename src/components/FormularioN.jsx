@@ -52,7 +52,7 @@ if (paciente.id) {
     objetoPaciente.id=paciente.id
     const pacientesActualizados=pacientes.map(objetoState=>paciente.id===objetoState.id?objetoPaciente:objetoState)
      setPacientes(pacientesActualizados)
-     setPaciente
+     setPaciente({})
 
 }else{
 //Agregando Registro
