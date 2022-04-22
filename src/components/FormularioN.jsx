@@ -1,6 +1,7 @@
 import React from 'react';
-import { useState } from 'react';
-function FormularioN() {
+import { useState,useEffect } from 'react';
+import Error from './Error';
+function FormularioN({pacientes,setPacientes,paciente,setPaciente}) {
     const[nombre,setNombre]=useState('');
     const[propietario,setPropietario]=useState('');
     const[email,setEmail]=useState('');
@@ -8,6 +9,23 @@ function FormularioN() {
     const[sintomas,setSintomas]=useState('');
 
     const[error, setError]=useState(false);
+
+useEffect(()=>{
+if (Object.keys(paciente).length>0) {
+    setNombre(paciente.nombre)
+    setPropietario(paciente.propietario)
+    setEmail(paciente.email)
+    setFecha(paciente.fecha)
+    setSintomas(paciente.sintomas)
+}
+},[paciente])
+
+
+    const generarId = () =>{
+        const ramdom=Math.random().toString(36).substring(2);
+        const fecha=Date.now().toString(36);
+        return ramdom+fecha;
+    }
 
     const handleSubmit=(e)=>{
      e.preventDefault();
@@ -19,6 +37,38 @@ function FormularioN() {
          return;    
      }
 setError(false);
+//Objeto de paciente
+const objetoPaciente={
+    nombre,
+    propietario,
+    email,
+    fecha,
+    sintomas,
+    
+
+}
+if (paciente.id) {
+    //Editando Regristro
+    objetoPaciente.id=paciente.id
+    const pacientesActualizados=pacientes.map(objetoState=>paciente.id===objetoState.id?objetoPaciente:objetoState)
+     setPacientes(pacientesActualizados)
+     setPaciente
+
+}else{
+//Agregando Registro
+objetoPaciente.id=generarId();
+setPacientes([...pacientes,objetoPaciente]);
+setPaciente({});
+
+}
+
+
+//Reiniciar formulario
+setNombre('')
+setPropietario('')
+setEmail('')
+setFecha('')
+setSintomas('')
     }
     
     return (
@@ -27,10 +77,8 @@ setError(false);
       <p className='text-lg mt-5 text-center mb-10'>Añade pacientes y <span className='text-indigo-500 font font-bold'>Adminístralos</span></p>
       
             <form onSubmit={handleSubmit} className='bg-white shadow-md rounded-lg py-10 px-5 mb-10' action="">
-{error&& 
-<div className='bg-red-500 text-white text-center font-bold uppercase mm-3 p-3 rounded-md'>
-    <p>Faltan datos en el formulario</p>
-</div>
+{error&& <Error mensaje='Faltan datos en el formulario'/>
+
 
 }
 <div className='mb-5'>
@@ -67,7 +115,7 @@ placeholder='Email contacto propietario'
 placeholder='Describe los síntomas'value={sintomas}
 onChange={(e)=>setSintomas(e.target.value)}/>
 </div>
-<input type="submit" value="Agregar Paciente" className='bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700  cursor-pointer tracking-widest'/>
+<input type="submit" value={paciente.id?"Editar Paciente":"Agregar Paciente"} className='bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700  cursor-pointer tracking-widest'/>
 
       </form>
       
